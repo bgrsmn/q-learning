@@ -1,9 +1,9 @@
 //////////////////////////////////
-//		Created By				//
-//      						//
-//   - Okan Pehlivan			//
-//   - Buğra Şişman				//
-//								//
+//	Created By	        //
+//      			//
+//   - Okan Pehlivan		//
+//   - BuÄŸra ÅiÅŸman		//
+//				//
 //////////////////////////////////
 
 #define OLC_PGE_APPLICATION
@@ -23,7 +23,7 @@ using namespace std;
 
 
 double R[100][100];
-double Q[100][100]; // 0 değerli güncellenecek
+double Q[100][100]; // 0 deÄŸerli gÃ¼ncellenecek
 int possible_action[20];
 int possible_action_num;
 
@@ -31,22 +31,22 @@ int possible_action_num;
 class Example : public olc::PixelGameEngine
 {
 public:
-	int nMapWidth; //Matrisin sütun sayısı
-	int nMapHeight; //Matrisin satır sayısı
+	int nMapWidth; //Matrisin sÃ¼tun sayÄ±sÄ±
+	int nMapHeight; //Matrisin satÄ±r sayÄ±sÄ±
 	int targetRoom; //Hedef nokta.
-	int roomValue = 0; //Oda numarası.
+	int roomValue = 0; //Oda numarasÄ±.
 	bool qLearningDone = false;
-	int nCellSize = 32; //Görünüm için gereken boyut bilgisi
-	int nBorderWidth = 4; //Görünüm için gereken boyut bilgisi
+	int nCellSize = 32; //GÃ¶rÃ¼nÃ¼m iÃ§in gereken boyut bilgisi
+	int nBorderWidth = 4; //GÃ¶rÃ¼nÃ¼m iÃ§in gereken boyut bilgisi
 
-	int nStartX; //Başlangıç noktasının X kordinatı
-	int nStartY; //Başlangıç noktasının Y kordinatı
-	int nEndX;   //Hedef noktasının X kordinatı
-	int nEndY;   //Hedef noktasının Y kordinatı
+	int nStartX; //BaÅŸlangÄ±Ã§ noktasÄ±nÄ±n X kordinatÄ±
+	int nStartY; //BaÅŸlangÄ±Ã§ noktasÄ±nÄ±n Y kordinatÄ±
+	int nEndX;   //Hedef noktasÄ±nÄ±n X kordinatÄ±
+	int nEndY;   //Hedef noktasÄ±nÄ±n Y kordinatÄ±
 
-	bool* bObstacleMap; //Default olarak false tanımlanmış engellerin bulunduğu dizi
+	bool* bObstacleMap; //Default olarak false tanÄ±mlanmÄ±ÅŸ engellerin bulunduÄŸu dizi
 	int* nFlowFieldZ;
-	double** reduceMatrix; //Ödül tablosunu elde edeceğimiz , ödül matrisi
+	double** reduceMatrix; //Ã–dÃ¼l tablosunu elde edeceÄŸimiz , Ã¶dÃ¼l matrisi
 
 	Example()
 	{
@@ -56,15 +56,15 @@ public:
 public:
 	bool OnUserCreate() override
 	{
-		bObstacleMap = new bool[nMapWidth * nMapHeight]{ false }; //Engellerin 1 boyutlu dizi olarak tanımlanması ve -1 değerini alması sağlandı.
-		nFlowFieldZ = new int[nMapWidth * nMapHeight]{ 0 }; //Oda numaraları en başta 0 olarak atandı
+		bObstacleMap = new bool[nMapWidth * nMapHeight]{ false }; //Engellerin 1 boyutlu dizi olarak tanÄ±mlanmasÄ± ve -1 deÄŸerini almasÄ± saÄŸlandÄ±.
+		nFlowFieldZ = new int[nMapWidth * nMapHeight]{ 0 }; //Oda numaralarÄ± en baÅŸta 0 olarak atandÄ±
 		return true;
 	}
 
-	//Ödül matrisinin dinamik olarak oluşturulması.
+	//Ã–dÃ¼l matrisinin dinamik olarak oluÅŸturulmasÄ±.
 	bool setReduceMatrix()
 	{
-		int size = nMapWidth * nMapHeight; //Ödül matrisinin boyutu
+		int size = nMapWidth * nMapHeight; //Ã–dÃ¼l matrisinin boyutu
 
 		reduceMatrix = new double* [size];
 
@@ -77,7 +77,7 @@ public:
 		{
 			for (int y = 0; y < size; y++)
 			{
-				reduceMatrix[x][y] = -1.0; //Default olarak her bir değer -1 olarak belirlendi.
+				reduceMatrix[x][y] = -1.0; //Default olarak her bir deÄŸer -1 olarak belirlendi.
 			}
 		}
 
@@ -85,7 +85,7 @@ public:
 		{
 			for (int y = 0; y < size; y++)
 			{
-				R[x][y] = -1.0; //Default olarak her bir değer -1 olarak belirlendi.
+				R[x][y] = -1.0; //Default olarak her bir deÄŸer -1 olarak belirlendi.
 			}
 		}
 
@@ -93,14 +93,14 @@ public:
 		{
 			for (int y = 0; y < size; y++)
 			{
-				Q[x][y] = 0; //Default olarak her bir değer 0 olarak belirlendi.
+				Q[x][y] = 0; //Default olarak her bir deÄŸer 0 olarak belirlendi.
 			}
 		}
 
 		return true;
 	}
 
-	//Terminal üzerinden bilgilendirmelerin yapılması sağlandı.
+	//Terminal Ã¼zerinden bilgilendirmelerin yapÄ±lmasÄ± saÄŸlandÄ±.
 	void Menu(string note) {
 
 		cout << "----------------------------------------------------------------------------------" << endl;
@@ -115,26 +115,26 @@ public:
 	}
 
 
-	//Ödül matrisinin hesaplanması.
+	//Ã–dÃ¼l matrisinin hesaplanmasÄ±.
 	bool calculateReduceMatrix()
 	{
 		int size = nMapWidth * nMapHeight; //Boyut.
 
-		//Oluşturulan map'in içerisinde kalmasını ve engeller veya hedef konumuna gelip gelmemesinin kontrolleri yapılmaktadır.
-		//Hedef noktası = 100 puan , Engeller = -1 , Başka bir odaya geçebilme durumu = 0
+		//OluÅŸturulan map'in iÃ§erisinde kalmasÄ±nÄ± ve engeller veya hedef konumuna gelip gelmemesinin kontrolleri yapÄ±lmaktadÄ±r.
+		//Hedef noktasÄ± = 100 puan , Engeller = -1 , BaÅŸka bir odaya geÃ§ebilme durumu = 0
 		for (int x = 0; x < nMapHeight; x++)
 		{
 			for (int y = 0; y < nMapWidth; y++)
 			{
-				int self = x * nMapWidth + y; //Matristeki her hücrenin kendi numarası elde edilir. (Oda numarası)
+				int self = x * nMapWidth + y; //Matristeki her hÃ¼crenin kendi numarasÄ± elde edilir. (Oda numarasÄ±)
 
-				//Satır numarası 0 ı gösterdiğinde üst kısımda hücreler olmadığı için x != 0 şartı getirilip üst konunma bakılmaması sağlanmıştır.
+				//SatÄ±r numarasÄ± 0 Ä± gÃ¶sterdiÄŸinde Ã¼st kÄ±sÄ±mda hÃ¼creler olmadÄ±ÄŸÄ± iÃ§in x != 0 ÅŸartÄ± getirilip Ã¼st konunma bakÄ±lmamasÄ± saÄŸlanmÄ±ÅŸtÄ±r.
 				if (x != 0)
 				{
-					//Hücrenin yukarısına bakılması için yapılan hesaplama
+					//HÃ¼crenin yukarÄ±sÄ±na bakÄ±lmasÄ± iÃ§in yapÄ±lan hesaplama
 					int upper_neighbour = (x - 1) * nMapWidth + y;
 
-					//Engel yoksa , hedef nokta ise = 100 , boş oda ise = 0
+					//Engel yoksa , hedef nokta ise = 100 , boÅŸ oda ise = 0
 					if (!bObstacleMap[upper_neighbour]) {
 						if ((x - 1) == nEndX && y == nEndY) {
 							reduceMatrix[self][upper_neighbour] = 100;
@@ -145,13 +145,13 @@ public:
 					}
 				}
 
-				//Sütun numarası 0 ı gösterdiğinde sol kısımdaki hücreler olmadığı için y != 0 şartı getirilip sol tarafın konumuna bakılmaması sağlanmıştır.
+				//SÃ¼tun numarasÄ± 0 Ä± gÃ¶sterdiÄŸinde sol kÄ±sÄ±mdaki hÃ¼creler olmadÄ±ÄŸÄ± iÃ§in y != 0 ÅŸartÄ± getirilip sol tarafÄ±n konumuna bakÄ±lmamasÄ± saÄŸlanmÄ±ÅŸtÄ±r.
 				if (y != 0)
 				{
-					//Hücrenin sol tarafına bakılması için yapılan hesaplama
+					//HÃ¼crenin sol tarafÄ±na bakÄ±lmasÄ± iÃ§in yapÄ±lan hesaplama
 					int left_neighbour = x * nMapWidth + y - 1;
 
-					//Engel yoksa , hedef nokta ise = 100 , boş oda ise = 0
+					//Engel yoksa , hedef nokta ise = 100 , boÅŸ oda ise = 0
 					if (!bObstacleMap[left_neighbour]) {
 						if (x == nEndX && (y - 1) == nEndY) {
 							reduceMatrix[self][left_neighbour] = 100;
@@ -162,13 +162,13 @@ public:
 					}
 				}
 
-				//Sağ tarafta kalan en son sütun numarası olmadığı sürece yapılan kontroldür. Burada da sağ kısımda hücreler olmadığı için bu koşul konulmuştur.
+				//SaÄŸ tarafta kalan en son sÃ¼tun numarasÄ± olmadÄ±ÄŸÄ± sÃ¼rece yapÄ±lan kontroldÃ¼r. Burada da saÄŸ kÄ±sÄ±mda hÃ¼creler olmadÄ±ÄŸÄ± iÃ§in bu koÅŸul konulmuÅŸtur.
 				if (y != nMapWidth - 1)
 				{
-					//Hücrenin sağ tarafına bakılması için yapılan hesaplama
+					//HÃ¼crenin saÄŸ tarafÄ±na bakÄ±lmasÄ± iÃ§in yapÄ±lan hesaplama
 					int right_neighbour = x * nMapWidth + y + 1;
 
-					//Engel yoksa , hedef nokta ise = 100 , boş oda ise = 0
+					//Engel yoksa , hedef nokta ise = 100 , boÅŸ oda ise = 0
 					if (!bObstacleMap[right_neighbour])
 					{
 						if (x == nEndX && (y + 1) == nEndY)
@@ -181,13 +181,13 @@ public:
 					}
 				}
 
-				//Alt tarafta kalan en son satır numarası olmadığı sürece yapılan kontroldür. Burada da aşağı kısımda hücreler olmadığı için bu koşul konulmuştur.
+				//Alt tarafta kalan en son satÄ±r numarasÄ± olmadÄ±ÄŸÄ± sÃ¼rece yapÄ±lan kontroldÃ¼r. Burada da aÅŸaÄŸÄ± kÄ±sÄ±mda hÃ¼creler olmadÄ±ÄŸÄ± iÃ§in bu koÅŸul konulmuÅŸtur.
 				if (x != nMapHeight - 1)
 				{
-					//Hücrenin alt tarafına bakılması için yapılan hesaplama
+					//HÃ¼crenin alt tarafÄ±na bakÄ±lmasÄ± iÃ§in yapÄ±lan hesaplama
 					int lower_neighbour = (x + 1) * nMapWidth + y;
 
-					//Engel yoksa , hedef nokta ise = 100 , boş oda ise = 0
+					//Engel yoksa , hedef nokta ise = 100 , boÅŸ oda ise = 0
 					if (!bObstacleMap[lower_neighbour])
 					{
 						if ((x + 1) == nEndX && y == nEndY) {
@@ -202,7 +202,7 @@ public:
 			}
 		}
 
-		//Terminalde ödül matrisinin görüntülenmesi
+		//Terminalde Ã¶dÃ¼l matrisinin gÃ¶rÃ¼ntÃ¼lenmesi
 		for (int x = 0; x < size; x++)
 		{
 			for (int y = 0; y < size; y++)
@@ -216,10 +216,10 @@ public:
 	}
 
 
-	//Arayüzden alınan Ödül matrisi ile global dizi olarak tanımlanan R matrisinin eşitlenmesi
+	//ArayÃ¼zden alÄ±nan Ã–dÃ¼l matrisi ile global dizi olarak tanÄ±mlanan R matrisinin eÅŸitlenmesi
 	bool EqualRmatrix() {
 
-		int sizeReduce = nMapHeight * nMapWidth; //Ödül matrisinin boyutu
+		int sizeReduce = nMapHeight * nMapWidth; //Ã–dÃ¼l matrisinin boyutu
 
 		for (int i = 0; i < sizeReduce; i++)
 		{
@@ -233,7 +233,7 @@ public:
 	}
 
 
-	//Mümkün olan , hareket edebileceği yerlere gidiyor. possible_action[] dizisinde gidebileceği oda numaralarını tutuyo
+	//MÃ¼mkÃ¼n olan , hareket edebileceÄŸi yerlere gidiyor. possible_action[] dizisinde gidebileceÄŸi oda numaralarÄ±nÄ± tutuyo
 	void get_possible_action(double R[100][100], int state, int possible_action[20], int ACTION_NUM) {
 		possible_action_num = 0;
 		for (int i = 0; i < ACTION_NUM; i++) {
@@ -244,7 +244,7 @@ public:
 		}
 	}
 
-	//Q tablosunda bulunduğumuz satırda yani mevcut konumda maksimum değeri bulup döndürüyor.
+	//Q tablosunda bulunduÄŸumuz satÄ±rda yani mevcut konumda maksimum deÄŸeri bulup dÃ¶ndÃ¼rÃ¼yor.
 	double get_max_q(double Q[100][100], int state, int ACTION_NUM) {
 		double temp_max = 0;
 		for (int i = 0; i < ACTION_NUM; ++i) {
@@ -267,8 +267,8 @@ public:
 		while (1) {
 			cout << "-- step " << step << ": initial state: " << init_state << endl;
 
-			// memset possible_action dizi olarak tanımlıyor.
-			memset(possible_action, 0, 10 * sizeof(int)); //10 tane int değerli dizi tanımlama her değer 0
+			// memset possible_action dizi olarak tanÄ±mlÄ±yor.
+			memset(possible_action, 0, 10 * sizeof(int)); //10 tane int deÄŸerli dizi tanÄ±mlama her deÄŸer 0
 			get_possible_action(R, init_state, possible_action, STATE_NUM);
 
 			next_action = possible_action[rand() % possible_action_num];
@@ -277,8 +277,8 @@ public:
 			max_q = get_max_q(Q, next_action, STATE_NUM);
 
 			Q_before = Q[init_state][next_action];
-			// Formül güncelleme Q(s,a)=R(s,a)+alpha * max{Q(s', a')}
-			Q[init_state][next_action] = R[init_state][next_action] + alpha * max_q; //Q learning formulü
+			// FormÃ¼l gÃ¼ncelleme Q(s,a)=R(s,a)+alpha * max{Q(s', a')}
+			Q[init_state][next_action] = R[init_state][next_action] + alpha * max_q; //Q learning formulÃ¼
 			Q_after = Q[init_state][next_action];
 
 			if (next_action == DES_STATE) {
@@ -286,7 +286,7 @@ public:
 				break;
 			}
 			else {
-				// Hedef konumu bulamadıysam şuan ki konumum yeni denediğim konumdur.
+				// Hedef konumu bulamadÄ±ysam ÅŸuan ki konumum yeni denediÄŸim konumdur.
 				init_state = next_action;
 			}
 			step++;
@@ -310,14 +310,14 @@ public:
 
 	void run_training(int init_state, int MATRIX_ROW, int MATRIX_COLUMN, int targetRoom) {
 
-		int initial_state = init_state; // Denemeye başlayacağı oda numarası 
-		int sizeReduce1 = MATRIX_ROW; //episode_iterator fonksiyonuna yollanmak için tanımlanmıştır.
+		int initial_state = init_state; // Denemeye baÅŸlayacaÄŸÄ± oda numarasÄ± 
+		int sizeReduce1 = MATRIX_ROW; //episode_iterator fonksiyonuna yollanmak iÃ§in tanÄ±mlanmÄ±ÅŸtÄ±r.
 
-		// Rastgele başladığı durum.
+		// Rastgele baÅŸladÄ±ÄŸÄ± durum.
 		srand((unsigned)time(NULL));
 		cout << "[INFO] start training..." << endl;
 		for (int i = 0; i < MAX_EPISODE; ++i) {
-			cout << "[INFO] Episode: " << i << endl; //kaç bölümde bulduğunu görmek için her döngüde yazdırıyor.
+			cout << "[INFO] Episode: " << i << endl; //kaÃ§ bÃ¶lÃ¼mde bulduÄŸunu gÃ¶rmek iÃ§in her dÃ¶ngÃ¼de yazdÄ±rÄ±yor.
 			initial_state = episode_iterator(initial_state, Q, R, sizeReduce1, targetRoom);
 			cout << "-- updated Q matrix: " << endl;
 			print_matrix(Q, MATRIX_ROW, MATRIX_COLUMN);
@@ -325,10 +325,10 @@ public:
 	}
 
 
-	//Q learning algoritmasının hesaplanmasını sağlayan fonksiyon
+	//Q learning algoritmasÄ±nÄ±n hesaplanmasÄ±nÄ± saÄŸlayan fonksiyon
 	bool Qlearning()
 	{
-		int sizeReduce = nMapHeight * nMapWidth; //Ödül matrisi boyutu
+		int sizeReduce = nMapHeight * nMapWidth; //Ã–dÃ¼l matrisi boyutu
 
 		cout << "Q matris:" << endl;
 		print_matrix(Q, sizeReduce, sizeReduce);
@@ -337,15 +337,15 @@ public:
 
 		run_training(1, sizeReduce, sizeReduce, targetRoom);
 
-		int startPosition = nStartY * nMapWidth + nStartX; // Başlangıç konumunun numarası
+		int startPosition = nStartY * nMapWidth + nStartX; // BaÅŸlangÄ±Ã§ konumunun numarasÄ±
 
-		NewCalculate(startPosition); //Arayüzde değiştirilen başlangıç noktasının parametre olarak yollanması.
+		NewCalculate(startPosition); //ArayÃ¼zde deÄŸiÅŸtirilen baÅŸlangÄ±Ã§ noktasÄ±nÄ±n parametre olarak yollanmasÄ±.
 		qLearningDone = true;
 
 		return true;
 	}
 
-	//En kısa yolun gösterilmesi , arayüz üzerinde de en kısa yol gösterilirken oda numaraları -1 yapılmıştır.
+	//En kÄ±sa yolun gÃ¶sterilmesi , arayÃ¼z Ã¼zerinde de en kÄ±sa yol gÃ¶sterilirken oda numaralarÄ± -1 yapÄ±lmÄ±ÅŸtÄ±r.
 	void NewCalculate(int position)
 	{
 		int sizeReduce = nMapHeight * nMapWidth;
@@ -379,27 +379,27 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		//Burada her hücrenin kendi numarasını elde etmek için p fonksiyonu yazıldı.
+		//Burada her hÃ¼crenin kendi numarasÄ±nÄ± elde etmek iÃ§in p fonksiyonu yazÄ±ldÄ±.
 		auto p = [&](int x, int y) { return y * nMapWidth + x; };
 		int size = nMapWidth * nMapHeight; //Boyut.
 
-		//Tıklanan kutucuğun X ve Y kordinatları.
+		//TÄ±klanan kutucuÄŸun X ve Y kordinatlarÄ±.
 		int nSelectedCellX = GetMouseX() / nCellSize;
 		int nSelectedCellY = GetMouseY() / nCellSize;
 
-		//Sol tık ile tıklayınca engel oluşturulması. Engel üstüne bir kez daha tıklayınca engel kalkar.
+		//Sol tÄ±k ile tÄ±klayÄ±nca engel oluÅŸturulmasÄ±. Engel Ã¼stÃ¼ne bir kez daha tÄ±klayÄ±nca engel kalkar.
 		if (GetMouse(0).bReleased)
 		{
 			bObstacleMap[p(nSelectedCellX, nSelectedCellY)] = !bObstacleMap[p(nSelectedCellX, nSelectedCellY)];
 		}
 
-		//Başlangıç durumunun X ve Y kordinatları alınması.
+		//BaÅŸlangÄ±Ã§ durumunun X ve Y kordinatlarÄ± alÄ±nmasÄ±.
 		if (GetMouse(1).bReleased)
 		{
 			nStartX = nSelectedCellX;
 			nStartY = nSelectedCellY;
 
-			//Q learning algoritması hesaplandıktan sonra başlangıç konumunun yeni Q learning hesabı için NewCalculate() fonksiyonuna gönderilmesi.
+			//Q learning algoritmasÄ± hesaplandÄ±ktan sonra baÅŸlangÄ±Ã§ konumunun yeni Q learning hesabÄ± iÃ§in NewCalculate() fonksiyonuna gÃ¶nderilmesi.
 			if (qLearningDone)
 			{
 				int position = nStartY * nMapWidth + nStartX;
@@ -408,25 +408,25 @@ public:
 
 		}
 
-		//Hedef durumunun X ve Y kordinatlarının alınması.
+		//Hedef durumunun X ve Y kordinatlarÄ±nÄ±n alÄ±nmasÄ±.
 		if (GetMouse(2).bReleased)
 		{
 			nEndX = nSelectedCellY;
 			nEndY = nSelectedCellX;
 
-			targetRoom = nEndX * nMapWidth + nEndY; //Hedef noktanın numarası.
+			targetRoom = nEndX * nMapWidth + nEndY; //Hedef noktanÄ±n numarasÄ±.
 
 			qLearningDone = false;
-			setReduceMatrix(); //Yeniden hesaplama yapılacağı zaman matrislerin değerlerinin başlangıç konumuna getirilmesi. 
+			setReduceMatrix(); //Yeniden hesaplama yapÄ±lacaÄŸÄ± zaman matrislerin deÄŸerlerinin baÅŸlangÄ±Ã§ konumuna getirilmesi. 
 		}
 
-		//Engeller konulup , başlangıç ve hedef noktaları belirlendikten sonra
-		//A tuşuna basıldığında ödül matrisinin hesaplanması yapılır.
+		//Engeller konulup , baÅŸlangÄ±Ã§ ve hedef noktalarÄ± belirlendikten sonra
+		//A tuÅŸuna basÄ±ldÄ±ÄŸÄ±nda Ã¶dÃ¼l matrisinin hesaplanmasÄ± yapÄ±lÄ±r.
 		if (GetKey(olc::Key::A).bReleased)
 		{
 			cout << "--------------------ODUL MATRISI---------------------------" << endl;
 			setReduceMatrix();
-			calculateReduceMatrix(); //Ödül matrisinin hesaplanması.
+			calculateReduceMatrix(); //Ã–dÃ¼l matrisinin hesaplanmasÄ±.
 			EqualRmatrix();
 
 			cout << "------------------------------------------------" << endl;
@@ -434,13 +434,13 @@ public:
 			Menu(note);
 		}
 
-		//Q learning algoritmasının hesaplanması
+		//Q learning algoritmasÄ±nÄ±n hesaplanmasÄ±
 		if (GetKey(olc::Key::Q).bReleased)
 		{
 			Qlearning();
 		}
 
-		//Her odanın numarasının hesaplanması (1,2,3,4,5,....)
+		//Her odanÄ±n numarasÄ±nÄ±n hesaplanmasÄ± (1,2,3,4,5,....)
 		while (roomValue < size)
 		{
 			for (int x = 0; x < nMapHeight; x++)
@@ -452,10 +452,10 @@ public:
 			}
 		}
 
-		//Varsayılan kutucukların mavi renk olması.
+		//VarsayÄ±lan kutucuklarÄ±n mavi renk olmasÄ±.
 		olc::Pixel colour = olc::BLUE;
 
-		//Başlangıç , engel ve hedef noktalarının renklerinin belirlenmesi.
+		//BaÅŸlangÄ±Ã§ , engel ve hedef noktalarÄ±nÄ±n renklerinin belirlenmesi.
 		for (int x = 0; x < nMapWidth; x++)
 		{
 			for (int y = 0; y < nMapHeight; y++)
@@ -472,7 +472,7 @@ public:
 					colour = olc::RED;
 
 				FillRect(x * nCellSize, y * nCellSize, nCellSize - nBorderWidth, nCellSize - nBorderWidth, colour);
-				DrawString(x * nCellSize, y * nCellSize, std::to_string(nFlowFieldZ[p(x, y)]), olc::WHITE); //Oda numaraları gösterilmesi
+				DrawString(x * nCellSize, y * nCellSize, std::to_string(nFlowFieldZ[p(x, y)]), olc::WHITE); //Oda numaralarÄ± gÃ¶sterilmesi
 			}
 		}
 
@@ -485,7 +485,7 @@ int main()
 {
 	Example demo;
 
-	//Kullanıcıdan satır , sütun , hedef noktasının alınması , Hedef noktası burada girildikten sonra arayüzde de değiştirilince bir sıkıntı olmuyor.
+	//KullanÄ±cÄ±dan satÄ±r , sÃ¼tun , hedef noktasÄ±nÄ±n alÄ±nmasÄ± , Hedef noktasÄ± burada girildikten sonra arayÃ¼zde de deÄŸiÅŸtirilince bir sÄ±kÄ±ntÄ± olmuyor.
 	while (true) {
 		cout << "Satir, Sutun ve Hedef Noktasini 0(Sifir)dan buyuk giriniz!" << endl;
 		cout << endl;
@@ -509,7 +509,7 @@ int main()
 		else break;
 	}
 
-	//Hedef noktasının X ve Y kordinatları 
+	//Hedef noktasÄ±nÄ±n X ve Y kordinatlarÄ± 
 	demo.nEndX = demo.targetRoom / demo.nMapWidth;
 	demo.nEndY = demo.targetRoom % demo.nMapWidth;
 
@@ -518,7 +518,7 @@ int main()
 
 	cout << endl;
 
-	demo.setReduceMatrix(); //Ödül matrisini boyutlandırma.
+	demo.setReduceMatrix(); //Ã–dÃ¼l matrisini boyutlandÄ±rma.
 
 	if (demo.Construct(512, 480, 2, 2))
 	{
